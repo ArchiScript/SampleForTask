@@ -7,6 +7,9 @@ namespace SampleForTask
     {
         static void Main(string[] args)
         {
+            CancellationTokenSource cancellationTokenSource = new CancellationTokenSource();
+            CancellationToken cancellationToken = cancellationTokenSource.Token;
+
             /* var task1 = new Task(() => Console.WriteLine("Message"));
              var task2 = new Task(Print);
              task1.Start();
@@ -14,7 +17,8 @@ namespace SampleForTask
              var task4 = Task.Run(() => Console.WriteLine("Print task4"));
              task3.Wait();*/
 
-            var task5 = Task.Factory.StartNew(() =>
+
+            /*var task5 = Task.Factory.StartNew(() =>
             {
                 Console.WriteLine("wrapper task start");
                 var task6 = Task.Factory.StartNew(() =>
@@ -27,11 +31,33 @@ namespace SampleForTask
                 Console.WriteLine("message from wrapper task");
                 Thread.Sleep(1000);
                 Console.WriteLine("wrapper task complete");
-            });
+            });*/
+
+            var task7 = Task<int>.Run(() => GetSum(5, 3));
+            Console.WriteLine(task7.Result);
         }
         public static void Print()
         {
             Console.WriteLine("Message by method");
+        }
+
+        private static int GetSum(int a, int b)
+        {
+            return a + b;
+        }
+
+        private static void Test(CancellationToken cancellationToken)
+        {
+            var task8 = Task.Factory.StartNew(() =>
+            {
+                while (!cancellationToken.IsCancellationRequested)
+                {
+                    Thread.Sleep(200);
+                    Console.WriteLine("x");
+                }
+
+
+            });
         }
     }
 }

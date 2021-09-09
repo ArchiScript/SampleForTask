@@ -33,10 +33,19 @@ namespace SampleForTask
                 Console.WriteLine("wrapper task complete");
             });*/
 
-            var task7 = Task<int>.Run(() => GetSum(5, 3));
-            Console.WriteLine(task7.Result);
+            /* var task7 = Task<int>.Run(() => GetSum(5, 3));
+             Console.WriteLine(task7.Result);*/
+
+
+            for (int i = 0; i < 10; i++)
+            {
+                Reader reader = new Reader(i);
+            }
+            Console.ReadLine();
         }
-        public static void Print()
+
+
+        /*public static void Print()
         {
             Console.WriteLine("Message by method");
         }
@@ -58,6 +67,43 @@ namespace SampleForTask
 
 
             });
+        }*/
+        
+
+
+    }
+    class Reader
+    {
+        // семафор
+        static Semaphore semaphore = new Semaphore(4,4);
+        Thread thread;
+        int count = 3; // счетчик
+
+        public Reader(int i)
+        {
+            thread = new Thread(Read);
+            thread.Name = $"Читатель {i}";
+            thread.Start();
+        }
+
+        public void Read()
+        {
+            while (count>0)
+            {
+                semaphore.WaitOne();
+                Console.WriteLine($"{Thread.CurrentThread.Name} входит в библиотеку");
+
+                Console.WriteLine($"{Thread.CurrentThread.Name} читает");
+                Thread.Sleep(1000);
+
+                Console.WriteLine($"{Thread.CurrentThread.Name} покидает библиотеку");
+
+                semaphore.Release();
+                count--;
+                Thread.Sleep(1000);
+            }
         }
     }
+
+    
 }
